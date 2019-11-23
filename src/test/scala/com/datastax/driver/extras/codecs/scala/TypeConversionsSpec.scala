@@ -21,7 +21,7 @@ import java.nio.ByteBuffer
 import java.util.{Date, UUID}
 
 import com.datastax.driver.core.{Duration, TypeCodec}
-import com.datastax.driver.extras.codecs.jdk8.{InstantCodec, LocalDateCodec, LocalTimeCodec}
+import com.datastax.driver.extras.codecs.jdk8.{InstantCodec, LocalTimeCodec}
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{Matchers, PropSpec}
 
@@ -48,7 +48,7 @@ class TypeConversionsSpec extends PropSpec with PropertyChecks with Matchers {
 
         (typeOf[String], TypeCodec.varchar()),
         (typeOf[BigInt], BigIntCodec),
-        (typeOf[BigDecimal], BigDecimalCodec),
+        (typeOf[BigDecimal], BigDecimalCodec2),
 
         (typeOf[ByteBuffer], TypeCodec.blob()),
         (typeOf[Date], TypeCodec.timestamp()),
@@ -58,8 +58,9 @@ class TypeConversionsSpec extends PropSpec with PropertyChecks with Matchers {
         (typeOf[UUID], TypeCodec.uuid()),
 
         (typeOf[java.time.Instant], InstantCodec.instance),
-        (typeOf[java.time.LocalDate], LocalDateCodec.instance),
+        (typeOf[java.time.LocalDate], LocalDateCodec),
         (typeOf[java.time.LocalTime], LocalTimeCodec.instance),
+        (typeOf[java.time.LocalDateTime], LocalDateTimeCodec),
 
         (typeOf[Option[Boolean]], OptionCodec[Boolean]),
         (typeOf[Option[Byte]], OptionCodec[Byte]),
