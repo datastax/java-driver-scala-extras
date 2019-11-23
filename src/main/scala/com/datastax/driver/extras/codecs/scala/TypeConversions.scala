@@ -23,7 +23,7 @@ import java.util.{Date, UUID}
 
 import com.datastax.driver.core.exceptions.CodecNotFoundException
 import com.datastax.driver.core.{Duration, TypeCodec}
-import com.datastax.driver.extras.codecs.jdk8.{InstantCodec, LocalDateCodec, LocalTimeCodec}
+import com.datastax.driver.extras.codecs.jdk8.{InstantCodec, LocalTimeCodec}
 import com.google.common.reflect.TypeToken
 
 import scala.reflect.runtime.universe._
@@ -45,7 +45,7 @@ object TypeConversions {
       case t if t =:= typeOf[Double] => DoubleCodec
 
       case t if t =:= typeOf[BigInt] => BigIntCodec
-      case t if t =:= typeOf[BigDecimal] => BigDecimalCodec
+      case t if t =:= typeOf[BigDecimal] => BigDecimalCodec2
 
       case t if t =:= typeOf[String] => TypeCodec.varchar()
       case t if t =:= typeOf[ByteBuffer] => TypeCodec.blob()
@@ -56,8 +56,9 @@ object TypeConversions {
       case t if t =:= typeOf[UUID] => TypeCodec.uuid()
 
       case t if t =:= typeOf[java.time.Instant] => InstantCodec.instance
-      case t if t =:= typeOf[java.time.LocalDate] => LocalDateCodec.instance
+      case t if t =:= typeOf[java.time.LocalDate] => LocalDateCodec
       case t if t =:= typeOf[java.time.LocalTime] => LocalTimeCodec.instance
+      case t if t =:= typeOf[java.time.LocalDateTime] => LocalDateTimeCodec
 
       case t if t <:< typeOf[Option[_]] => OptionCodec(toCodec[Any](tpe.typeArgs.head))
 
