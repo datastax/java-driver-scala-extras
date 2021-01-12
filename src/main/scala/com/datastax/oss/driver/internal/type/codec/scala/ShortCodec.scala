@@ -1,4 +1,4 @@
-package com.datastax.oss.driver.internal.core.`type`.codec
+package com.datastax.oss.driver.internal.core.`type`.codec.scala
 
 import com.datastax.oss.driver.api.core.`type`.codec.TypeCodec
 import com.datastax.oss.driver.api.core.ProtocolVersion

@@ -7,9 +7,10 @@ licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.
 scalaVersion := "2.12.12"
 
 libraryDependencies ++= Seq(
-  "com.datastax.oss" % "java-driver-core" % "4.9.0"  % "provided",
-  "org.scalatest"   %% "scalatest"        % "3.2.3"  % "test",
-  "org.scalacheck"  %% "scalacheck"       % "1.15.1" % "test"
+  "com.datastax.oss"  % "java-driver-core" % "4.9.0"   % "provided",
+  "org.scalatest"    %% "scalatest"        % "3.2.3"   % "test",
+  "org.scalacheck"   %% "scalacheck"       % "1.15.1"  % "test",
+  "org.cassandraunit" % "cassandra-unit"   % "4.3.1.0" % "test"
 )
 
 scalacOptions ++= Seq(
@@ -23,3 +24,4 @@ scalacOptions ++= Seq(
 )
 
 javacOptions ++= Seq("-Xlint:unchecked", "-Xlint:deprecation")
+testOptions in Test += Tests.Argument("-oF") // Show full stack trace
