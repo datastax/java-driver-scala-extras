@@ -4,7 +4,7 @@ import com.datastax.oss.driver.api.core.CqlSession
 import com.datastax.oss.driver.api.core.`type`.codec.TypeCodec
 import com.datastax.oss.driver.api.core.`type`.codec.registry.MutableCodecRegistry
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper
-import org.scalatest.{ BeforeAndAfterAll, Suite }
+import org.scalatest.{BeforeAndAfterAll, Suite}
 
 trait CassandraSpec extends BeforeAndAfterAll { this: Suite =>
 
@@ -20,7 +20,7 @@ trait CassandraSpec extends BeforeAndAfterAll { this: Suite =>
     System.getSecurityManager().synchronized {
       EmbeddedCassandraServerHelper.startEmbeddedCassandra(startTimeout)
       val session = EmbeddedCassandraServerHelper.getSession
-  
+
       session.execute(
         s"CREATE KEYSPACE IF NOT EXISTS $keyspace WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 1}"
       )
