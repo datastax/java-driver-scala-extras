@@ -3,7 +3,11 @@ package com.datastax.oss.driver.internal.core.`type`.codec.scala
 import java.util.UUID
 
 import com.datastax.oss.driver.api.core.`type`.DataTypes
-import com.datastax.oss.driver.api.core.`type`.codec.{CodecNotFoundException, TypeCodec, TypeCodecs}
+import com.datastax.oss.driver.api.core.`type`.codec.{
+  CodecNotFoundException,
+  TypeCodec,
+  TypeCodecs
+}
 import org.scalatest.exceptions.TestFailedException
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec

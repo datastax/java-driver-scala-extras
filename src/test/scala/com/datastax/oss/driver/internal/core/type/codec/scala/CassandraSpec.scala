@@ -4,7 +4,7 @@ import com.datastax.oss.driver.api.core.CqlSession
 import com.datastax.oss.driver.api.core.`type`.codec.TypeCodec
 import com.datastax.oss.driver.api.core.`type`.codec.registry.MutableCodecRegistry
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper
-import org.scalatest.{BeforeAndAfterAll, Suite}
+import org.scalatest.{ BeforeAndAfterAll, Suite }
 
 trait CassandraSpec extends BeforeAndAfterAll { this: Suite =>
 

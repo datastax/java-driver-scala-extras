@@ -5,7 +5,7 @@ import java.nio.ByteBuffer
 import com.datastax.oss.driver.api.core.ProtocolVersion
 import com.datastax.oss.driver.api.core.`type`.codec.TypeCodec
 import com.datastax.oss.driver.api.core.`type`.reflect.GenericType
-import com.datastax.oss.driver.api.core.`type`.{DataType, DataTypes}
+import com.datastax.oss.driver.api.core.`type`.{ DataType, DataTypes }
 
 object DoubleCodec extends TypeCodec[Double] {
 
@@ -20,11 +20,9 @@ object DoubleCodec extends TypeCodec[Double] {
       )
     else bytes.getDouble(bytes.position)
 
-  def getCqlType(): DataType =
-    DataTypes.DOUBLE
+  val getCqlType: DataType = DataTypes.DOUBLE
 
-  def getJavaType(): GenericType[Double] =
-    GenericType.of(classOf[Double])
+  val getJavaType: GenericType[Double] = GenericType.of(classOf[Double])
 
   def format(value: Double): String =
     value.toString
@@ -40,7 +38,7 @@ object DoubleCodec extends TypeCodec[Double] {
 
   override def accepts(javaClass: Class[_]): Boolean = javaClass == classOf[Double]
 
-  override def accepts(javaType: GenericType[_]): Boolean = javaType == getJavaType()
+  override def accepts(javaType: GenericType[_]): Boolean = javaType == getJavaType
 
   override def accepts(value: Any): Boolean = value.isInstanceOf[Double]
 }

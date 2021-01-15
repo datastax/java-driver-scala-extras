@@ -5,7 +5,7 @@ import java.nio.ByteBuffer
 import com.datastax.oss.driver.api.core.ProtocolVersion
 import com.datastax.oss.driver.api.core.`type`.DataType
 import com.datastax.oss.driver.api.core.`type`.codec.TypeCodec
-import com.datastax.oss.driver.api.core.`type`.reflect.{GenericType, GenericTypeParameter}
+import com.datastax.oss.driver.api.core.`type`.reflect.{ GenericType, GenericTypeParameter }
 import com.datastax.oss.driver.shaded.guava.common.reflect.TypeToken
 
 class OptionCodec[T](inner: TypeCodec[T]) extends TypeCodec[Option[T]] {
@@ -17,12 +17,13 @@ class OptionCodec[T](inner: TypeCodec[T]) extends TypeCodec[Option[T]] {
       .asInstanceOf[GenericType[Option[T]]]
   }
 
-  override def getCqlType: DataType = inner.getCqlType
+  override val getCqlType: DataType = inner.getCqlType
 
   override def encode(value: Option[T], protocolVersion: ProtocolVersion): ByteBuffer =
     value match {
       case Some(value) => inner.encode(value, protocolVersion)
-      case None => null // FIXME this would create a tombstone, although this is how `OptionalCodec` does it. A higher level solution is needed (eg. PSTMT unset)
+      case None =>
+        null // FIXME this would create a tombstone, although this is how `OptionalCodec` does it. A higher level solution is needed (eg. PSTMT unset)
     }
 
   override def decode(bytes: ByteBuffer, protocolVersion: ProtocolVersion): Option[T] =

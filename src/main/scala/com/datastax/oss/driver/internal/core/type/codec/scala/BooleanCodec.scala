@@ -5,7 +5,7 @@ import java.nio.ByteBuffer
 import com.datastax.oss.driver.api.core.ProtocolVersion
 import com.datastax.oss.driver.api.core.`type`.codec.TypeCodec
 import com.datastax.oss.driver.api.core.`type`.reflect.GenericType
-import com.datastax.oss.driver.api.core.`type`.{DataType, DataTypes}
+import com.datastax.oss.driver.api.core.`type`.{ DataType, DataTypes }
 
 object BooleanCodec extends TypeCodec[Boolean] {
 
@@ -23,11 +23,9 @@ object BooleanCodec extends TypeCodec[Boolean] {
       )
     else bytes.get(bytes.position()) != 0
 
-  def getCqlType(): DataType =
-    DataTypes.BOOLEAN
+  val getCqlType: DataType = DataTypes.BOOLEAN
 
-  def getJavaType(): GenericType[Boolean] =
-    GenericType.of(classOf[Boolean])
+  val getJavaType: GenericType[Boolean] = GenericType.of(classOf[Boolean])
 
   def format(value: Boolean): String =
     value.toString
@@ -43,7 +41,7 @@ object BooleanCodec extends TypeCodec[Boolean] {
 
   override def accepts(javaClass: Class[_]): Boolean = javaClass == classOf[Boolean]
 
-  override def accepts(javaType: GenericType[_]): Boolean = javaType == getJavaType()
+  override def accepts(javaType: GenericType[_]): Boolean = javaType == getJavaType
 
   override def accepts(value: Any): Boolean = value.isInstanceOf[Boolean]
 

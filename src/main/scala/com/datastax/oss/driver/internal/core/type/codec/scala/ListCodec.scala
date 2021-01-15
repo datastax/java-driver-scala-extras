@@ -10,8 +10,6 @@ import com.datastax.oss.driver.internal.core.`type`.DefaultListType
 import com.datastax.oss.driver.internal.core.`type`.codec.ParseUtils
 import com.datastax.oss.driver.shaded.guava.common.reflect.TypeToken
 
-import scala.collection.mutable.ListBuffer
-
 class ListCodec[T](inner: TypeCodec[T], frozen: Boolean) extends TypeCodec[List[T]] {
 
   override def accepts(value: Any): Boolean = value match {
