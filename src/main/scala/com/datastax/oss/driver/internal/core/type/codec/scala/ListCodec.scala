@@ -78,12 +78,10 @@ class ListCodec[T](inner: TypeCodec[T], frozen: Boolean) extends TypeCodec[List[
       if (value.charAt(idx) == ']') {
         List.empty[T]
       } else {
-        val list = ListBuffer.empty[T]
+        val list = List.newBuilder[T]
         while (idx < value.length) {
           val n = ParseUtils.skipCQLValue(value, idx)
-          list.append(
-            inner.parse(value.substring(idx, n))
-          )
+          list += inner.parse(value.substring(idx, n))
 
           idx = ParseUtils.skipSpaces(value, n)
           if (idx >= value.length) {
