@@ -5,22 +5,23 @@ import java.nio.ByteBuffer
 import com.datastax.oss.driver.api.core.ProtocolVersion
 import com.datastax.oss.driver.api.core.`type`.DataType
 import com.datastax.oss.driver.api.core.`type`.codec.TypeCodec
-import com.datastax.oss.driver.internal.core.`type`.DefaultListType
+import com.datastax.oss.driver.internal.core.`type`.DefaultSetType
 import com.datastax.oss.driver.internal.core.`type`.codec.ParseUtils
 
 import scala.collection.Factory
 
-abstract class AbstractSeqCodec[T, M[T] <: Seq[T]](
+abstract class AbstractSetCodec[T, M[T] <: Set[T]](
     inner: TypeCodec[T],
     frozen: Boolean
-)(implicit factory: Factory[T, M[T]]) extends TypeCodec[M[T]] {
+)(implicit factory: Factory[T, M[T]])
+    extends TypeCodec[M[T]] {
 
   override def accepts(value: Any): Boolean = value match {
     case l: M[_] => l.headOption.fold(true)(inner.accepts)
     case _ => false
   }
 
-  override val getCqlType: DataType = new DefaultListType(inner.getCqlType, frozen)
+  override val getCqlType: DataType = new DefaultSetType(inner.getCqlType, frozen)
 
   override def encode(value: M[T], protocolVersion: ProtocolVersion): ByteBuffer =
     if (value == null) null
@@ -58,7 +59,7 @@ abstract class AbstractSeqCodec[T, M[T] <: Seq[T]](
     if (value == null) {
       "NULL"
     } else {
-      value.mkString("[", ",", "]")
+      value.mkString("{", ",", "}")
     }
 
   override def parse(value: String): M[T] = {
@@ -68,13 +69,13 @@ abstract class AbstractSeqCodec[T, M[T] <: Seq[T]](
       builder.result()
     } else {
       var idx = ParseUtils.skipSpaces(value, 0)
-      if (value.charAt(idx) != '[') {
+      if (value.charAt(idx) != '{') {
         throw new IllegalArgumentException(
-          s"Cannot parse list value from '$value', at character $idx expecting '[' but got '${value.charAt(idx)}''"
+          s"Cannot parse set value from '$value', at character $idx expecting '{' but got '${value.charAt(idx)}''"
         )
       }
       idx = ParseUtils.skipSpaces(value, idx + 1)
-      if (value.charAt(idx) == ']') {
+      if (value.charAt(idx) == '}') {
         builder.result()
       } else {
         while (idx < value.length) {
@@ -84,19 +85,19 @@ abstract class AbstractSeqCodec[T, M[T] <: Seq[T]](
           idx = ParseUtils.skipSpaces(value, n)
           if (idx >= value.length) {
             throw new IllegalArgumentException(
-              s"Malformed list value '$value', missing closing ']'"
+              s"Malformed set value '$value', missing closing '}'"
             )
-          } else if (value.charAt(idx) == ']') {
+          } else if (value.charAt(idx) == '}') {
             return builder.result()
           } else if (value.charAt(idx) != ',') {
             throw new IllegalArgumentException(
-              s"Cannot parse list value from '$value', at character $idx expecting ',' but got '${value
+              s"Cannot parse set value from '$value', at character $idx expecting ',' but got '${value
                 .charAt(idx)}''"
             )
           }
           idx = ParseUtils.skipSpaces(value, idx + 1)
         }
-        throw new IllegalArgumentException(s"Malformed list value '$value', missing closing ']'")
+        throw new IllegalArgumentException(s"Malformed set value '$value', missing closing '}'")
       }
     }
   }

@@ -39,7 +39,7 @@ lazy val bench = project
     publishArtifact := false,
     libraryDependencies ++= Seq(
       "com.datastax.oss"  % "java-driver-core" % "4.9.0" % "test",
-      "com.storm-enroute" %% "scalameter" % "0.20" % "test" // ScalaMeter version is set in version.sbt
+      "com.storm-enroute" %% "scalameter" % "0.20" % "test"
     ),
     testFrameworks += new TestFramework("org.scalameter.ScalaMeterFramework"),
     parallelExecution in Test := false,
