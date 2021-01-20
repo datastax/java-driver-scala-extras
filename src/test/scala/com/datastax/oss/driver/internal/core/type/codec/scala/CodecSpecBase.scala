@@ -14,7 +14,7 @@ trait CodecSpecBase[T] {
   protected def encode(t: T): Option[String] = encode(t, ProtocolVersion.DEFAULT)
 
   protected def decode(hexString: String, protocolVersion: ProtocolVersion): Option[T] =
-    Option(hexString).map(Bytes.fromHexString).map(codec.decode(_, protocolVersion))
+    Option(hexString).map(Bytes.fromHexString).flatMap(hex => Option(codec.decode(hex, protocolVersion))) // FIXME, this is wrong, if hexString is null, then nothing happens
 
   protected def decode(hexString: String): Option[T] = decode(hexString, ProtocolVersion.DEFAULT)
 
