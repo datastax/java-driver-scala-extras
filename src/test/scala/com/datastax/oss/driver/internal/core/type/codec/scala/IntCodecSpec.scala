@@ -1,11 +1,15 @@
 package com.datastax.oss.driver.internal.core.`type`.codec.scala
 
-import com.datastax.oss.driver.api.core.`type`.codec.TypeCodec
+import com.datastax.oss.driver.api.core.`type`.codec.{ TypeCodec, TypeCodecs }
 import com.datastax.oss.driver.api.core.`type`.reflect.GenericType
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class IntCodecSpec extends AnyWordSpec with Matchers with CodecSpecBase[Int] {
+class IntCodecSpec
+    extends AnyWordSpec
+    with Matchers
+    with CodecSpecBase[Int]
+    with OnParCodecSpec[Int, java.lang.Integer] {
 
   override protected val codec: TypeCodec[Int] = IntCodec
 
@@ -17,6 +21,7 @@ class IntCodecSpec extends AnyWordSpec with Matchers with CodecSpecBase[Int] {
     "decode" in {
       decode("0x00000000") shouldBe Some(0)
       decode("0x") shouldBe Some(0)
+      decode(null) shouldBe Some(0)
     }
 
     "fail to decode if too many bytes" in {
@@ -57,5 +62,22 @@ class IntCodecSpec extends AnyWordSpec with Matchers with CodecSpecBase[Int] {
       codec.accepts(123) shouldBe true
       codec.accepts(Int.MaxValue) shouldBe true
     }
+
+    // Can't test 'null' since 'Int' extends 'AnyVal'
+    "on par with Java Codec (encode-decode)" in testEncodeDecode(
+      0,
+      1,
+      123
+    )
+
+    "on par with Java Codec (parse-format)" in testParseFormat(
+      0,
+      1,
+      123
+    )
   }
+
+  override def javaCodec: TypeCodec[Integer] = TypeCodecs.INT
+
+  override def toJava(t: Int): Integer = t
 }

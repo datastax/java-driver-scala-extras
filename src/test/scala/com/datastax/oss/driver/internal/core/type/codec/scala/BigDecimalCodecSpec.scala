@@ -1,11 +1,11 @@
 package com.datastax.oss.driver.internal.core.`type`.codec.scala
 
-import com.datastax.oss.driver.api.core.`type`.codec.TypeCodec
+import com.datastax.oss.driver.api.core.`type`.codec.{TypeCodec, TypeCodecs}
 import com.datastax.oss.driver.api.core.`type`.reflect.GenericType
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class BigDecimalCodecSpec extends AnyWordSpec with Matchers with CodecSpecBase[BigDecimal] {
+class BigDecimalCodecSpec extends AnyWordSpec with Matchers with CodecSpecBase[BigDecimal] with OnParCodecSpec[BigDecimal, java.math.BigDecimal] {
 
   override protected val codec: TypeCodec[BigDecimal] = BigDecimalCodec
 
@@ -66,8 +66,26 @@ class BigDecimalCodecSpec extends AnyWordSpec with Matchers with CodecSpecBase[B
     }
 
     "accept objects" in {
-      codec.accepts(BigDecimal(123)) shouldBe true
+      codec.accepts(BigDecimal(128, 4)) shouldBe true
       codec.accepts(Double.MaxValue) shouldBe false
     }
+
+    "on par with Java Codec (encode-decode)" in testEncodeDecode(
+      null,
+      BigDecimal(0),
+      BigDecimal(1),
+      BigDecimal(128, 4)
+    )
+
+    "on par with Java Codec (parse-format)" in testParseFormat(
+      null,
+      BigDecimal(0),
+      BigDecimal(1),
+      BigDecimal(128, 4)
+    )
   }
+
+  override def javaCodec: TypeCodec[java.math.BigDecimal] = TypeCodecs.DECIMAL
+
+  override def toJava(t: BigDecimal): java.math.BigDecimal = if (t == null) null else t.bigDecimal
 }

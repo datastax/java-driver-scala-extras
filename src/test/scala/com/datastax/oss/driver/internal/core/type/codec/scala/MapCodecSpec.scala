@@ -1,13 +1,15 @@
 package com.datastax.oss.driver.internal.core.`type`.codec.scala
 
-import com.datastax.oss.driver.api.core.ProtocolVersion
-import com.datastax.oss.driver.api.core.`type`.codec.{TypeCodec, TypeCodecs}
+import java.util
+
+import com.datastax.oss.driver.api.core.`type`.codec.{ TypeCodec, TypeCodecs }
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
 class MapCodecSpec extends AnyWordSpec with Matchers with CodecSpecBase[Map[String, Int]] {
 
-  override protected val codec: TypeCodec[Map[String, Int]] = MapCodec.frozen(TypeCodecs.TEXT, IntCodec)
+  override protected val codec: TypeCodec[Map[String, Int]] =
+    MapCodec.frozen(TypeCodecs.TEXT, IntCodec)
 
   "MapCodec" should {
     val value = Map("Foo" -> 1, "Bar" -> 2, "Baz" -> 3)
@@ -20,9 +22,11 @@ class MapCodecSpec extends AnyWordSpec with Matchers with CodecSpecBase[Map[Stri
     }
 
     "decode" in {
-      codec.decode(null, ProtocolVersion.DEFAULT) shouldBe Map.empty[String, Int]
+      decode(null) shouldBe Some(Map.empty[String, Int])
       decode("0x00000000") shouldBe Some(Map.empty[String, Int])
-      decode("0x0000000300000003466f6f00000004000000010000000342617200000004000000020000000342617a0000000400000003") shouldBe Some(
+      decode(
+        "0x0000000300000003466f6f00000004000000010000000342617200000004000000020000000342617a0000000400000003"
+      ) shouldBe Some(
         value
       )
     }
@@ -33,8 +37,8 @@ class MapCodecSpec extends AnyWordSpec with Matchers with CodecSpecBase[Map[Stri
     }
 
     "parse" in {
-      parse("") shouldBe Map.empty[String, Int]
-      parse("NULL") shouldBe Map.empty[String, Int]
+      parse("") shouldBe null
+      parse("NULL") shouldBe null
       parse("{}") shouldBe Map.empty[String, Int]
       parse("{'Foo':1,'Bar':2,'Baz':3}") shouldBe value
       parse(" { 'Foo' : 1 , 'Bar' : 2 , 'Baz' : 3 } ") shouldBe value
@@ -61,4 +65,36 @@ class MapCodecSpec extends AnyWordSpec with Matchers with CodecSpecBase[Map[Stri
       codec.accepts(Map(1 -> "Foo")) shouldBe false
     }
   }
+}
+
+class OnParMapCodecSpec
+    extends AnyWordSpec
+    with Matchers
+    with CodecSpecBase[Map[String, String]]
+    with OnParCodecSpec[Map[String, String], java.util.Map[String, String]] {
+
+  "MapCodec" should {
+    "on par with Java Codec (encode-decode)" in testEncodeDecode(
+      null,
+      Map(),
+      Map("foo" -> "bar", "bar" -> "baz")
+    )
+
+    "on par with Java Codec (parse-format)" in testParseFormat(
+      null,
+      Map(),
+      Map("foo" -> "bar", "bar" -> "baz")
+    )
+  }
+
+  import scala.jdk.CollectionConverters._
+
+  override protected val codec: TypeCodec[Map[String, String]] =
+    MapCodec.frozen(TypeCodecs.TEXT, TypeCodecs.TEXT)
+
+  override def javaCodec: TypeCodec[util.Map[String, String]] =
+    TypeCodecs.mapOf(TypeCodecs.TEXT, TypeCodecs.TEXT)
+
+  override def toJava(t: Map[String, String]): util.Map[String, String] =
+    if (t == null) null else t.asJava
 }

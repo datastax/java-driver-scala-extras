@@ -1,7 +1,7 @@
 package com.datastax.oss.driver.internal.core.`type`.codec.scala
 
 import com.datastax.oss.driver.api.core.`type`.codec.TypeCodec
-import com.datastax.oss.driver.api.core.`type`.reflect.{GenericType, GenericTypeParameter}
+import com.datastax.oss.driver.api.core.`type`.reflect.{ GenericType, GenericTypeParameter }
 import com.datastax.oss.driver.shaded.guava.common.reflect.TypeToken
 
 class VectorCodec[T](inner: TypeCodec[T], frozen: Boolean)

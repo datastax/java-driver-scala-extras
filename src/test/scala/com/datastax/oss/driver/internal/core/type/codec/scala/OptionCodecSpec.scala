@@ -29,6 +29,7 @@ class OptionCodecSpec
     }
 
     "decode" in {
+      decode(null) shouldBe Some(None)
       decode("0x00000001") shouldBe Some(Some(1))
       decode("0x") shouldBe Some(None)
     }

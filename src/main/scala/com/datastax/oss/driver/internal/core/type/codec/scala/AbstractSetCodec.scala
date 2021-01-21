@@ -26,10 +26,10 @@ abstract class AbstractSetCodec[T, M[T] <: Set[T]](
   override def encode(value: M[T], protocolVersion: ProtocolVersion): ByteBuffer =
     if (value == null) null
     else {
-      // FIXME this seems pretty costly, we iterate the list several times!
+      // FIXME this seems pretty costly, we iterate the set several times!
       val buffers = for (item <- value) yield {
         if (item == null) {
-          throw new IllegalArgumentException("List elements cannot be null")
+          throw new IllegalArgumentException("Set elements cannot be null")
         }
         inner.encode(item, protocolVersion)
       }
@@ -59,16 +59,15 @@ abstract class AbstractSetCodec[T, M[T] <: Set[T]](
     if (value == null) {
       "NULL"
     } else {
-      value.mkString("{", ",", "}")
+      value.map(inner.format).mkString("{", ",", "}")
     }
 
-  override def parse(value: String): M[T] = {
-    val builder = factory.newBuilder
-
+  override def parse(value: String): M[T] =
     if (value == null || value.isEmpty || value.equalsIgnoreCase("NULL")) {
-      builder.result()
+      null.asInstanceOf[M[T]]
     } else {
-      var idx = ParseUtils.skipSpaces(value, 0)
+      val builder = factory.newBuilder
+      var idx     = ParseUtils.skipSpaces(value, 0)
       if (value.charAt(idx) != '{') {
         throw new IllegalArgumentException(
           s"Cannot parse set value from '$value', at character $idx expecting '{' but got '${value.charAt(idx)}''"
@@ -100,6 +99,5 @@ abstract class AbstractSetCodec[T, M[T] <: Set[T]](
         throw new IllegalArgumentException(s"Malformed set value '$value', missing closing '}'")
       }
     }
-  }
 
 }

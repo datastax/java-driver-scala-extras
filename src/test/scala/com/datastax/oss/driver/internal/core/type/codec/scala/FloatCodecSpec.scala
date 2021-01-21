@@ -1,11 +1,17 @@
 package com.datastax.oss.driver.internal.core.`type`.codec.scala
 
-import com.datastax.oss.driver.api.core.`type`.codec.TypeCodec
+import java.lang
+
+import com.datastax.oss.driver.api.core.`type`.codec.{ TypeCodec, TypeCodecs }
 import com.datastax.oss.driver.api.core.`type`.reflect.GenericType
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class FloatCodecSpec extends AnyWordSpec with Matchers with CodecSpecBase[Float] {
+class FloatCodecSpec
+    extends AnyWordSpec
+    with Matchers
+    with CodecSpecBase[Float]
+    with OnParCodecSpec[Float, java.lang.Float] {
 
   override protected val codec: TypeCodec[Float] = FloatCodec
 
@@ -17,6 +23,7 @@ class FloatCodecSpec extends AnyWordSpec with Matchers with CodecSpecBase[Float]
     "decode" in {
       decode("0x00000000") shouldBe Some(0.0f)
       decode("0x") shouldBe Some(0.0f)
+      decode(null) shouldBe Some(0.0f)
     }
 
     "fail to decode if too many bytes" in {
@@ -58,5 +65,20 @@ class FloatCodecSpec extends AnyWordSpec with Matchers with CodecSpecBase[Float]
       codec.accepts(Float.MaxValue) shouldBe true
       codec.accepts(Int.MaxValue) shouldBe false
     }
+
+    // Can't test 'null' since 'Float' extends 'AnyVal'
+    "on par with Java Codec (encode-decode)" in testEncodeDecode(
+      0.0f,
+      123.45f
+    )
+
+    "on par with Java Codec (parse-format)" in testParseFormat(
+      0.0f,
+      123.45f
+    )
   }
+
+  override def javaCodec: TypeCodec[lang.Float] = TypeCodecs.FLOAT
+
+  override def toJava(t: Float): lang.Float = t
 }

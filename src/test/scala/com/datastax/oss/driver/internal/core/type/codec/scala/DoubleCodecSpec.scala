@@ -1,11 +1,17 @@
 package com.datastax.oss.driver.internal.core.`type`.codec.scala
 
-import com.datastax.oss.driver.api.core.`type`.codec.TypeCodec
+import java.lang
+
+import com.datastax.oss.driver.api.core.`type`.codec.{ TypeCodec, TypeCodecs }
 import com.datastax.oss.driver.api.core.`type`.reflect.GenericType
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class DoubleCodecSpec extends AnyWordSpec with Matchers with CodecSpecBase[Double] {
+class DoubleCodecSpec
+    extends AnyWordSpec
+    with Matchers
+    with CodecSpecBase[Double]
+    with OnParCodecSpec[Double, java.lang.Double] {
 
   override protected val codec: TypeCodec[Double] = DoubleCodec
 
@@ -17,6 +23,7 @@ class DoubleCodecSpec extends AnyWordSpec with Matchers with CodecSpecBase[Doubl
     "decode" in {
       decode("0x0000000000000000") shouldBe Some(0.0)
       decode("0x") shouldBe Some(0.0)
+      decode(null) shouldBe Some(0.0)
     }
 
     "fail to decode if too many bytes" in {
@@ -58,5 +65,20 @@ class DoubleCodecSpec extends AnyWordSpec with Matchers with CodecSpecBase[Doubl
       codec.accepts(Double.MaxValue) shouldBe true
       codec.accepts(Int.MaxValue) shouldBe false
     }
+
+    // Can't test 'null' since 'Double' extends 'AnyVal'
+    "on par with Java Codec (encode-decode)" in testEncodeDecode(
+      0.0,
+      123.45d
+    )
+
+    "on par with Java Codec (parse-format)" in testParseFormat(
+      0.0,
+      123.45d
+    )
   }
+
+  override def javaCodec: TypeCodec[lang.Double] = TypeCodecs.DOUBLE
+
+  override def toJava(t: Double): lang.Double = t
 }

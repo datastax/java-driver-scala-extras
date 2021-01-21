@@ -13,7 +13,8 @@ import scala.collection.Factory
 abstract class AbstractSeqCodec[T, M[T] <: Seq[T]](
     inner: TypeCodec[T],
     frozen: Boolean
-)(implicit factory: Factory[T, M[T]]) extends TypeCodec[M[T]] {
+)(implicit factory: Factory[T, M[T]])
+    extends TypeCodec[M[T]] {
 
   override def accepts(value: Any): Boolean = value match {
     case l: M[_] => l.headOption.fold(true)(inner.accepts)
@@ -58,16 +59,15 @@ abstract class AbstractSeqCodec[T, M[T] <: Seq[T]](
     if (value == null) {
       "NULL"
     } else {
-      value.mkString("[", ",", "]")
+      value.map(inner.format).mkString("[", ",", "]")
     }
 
-  override def parse(value: String): M[T] = {
-    val builder = factory.newBuilder
-
+  override def parse(value: String): M[T] =
     if (value == null || value.isEmpty || value.equalsIgnoreCase("NULL")) {
-      builder.result()
+      null.asInstanceOf[M[T]]
     } else {
-      var idx = ParseUtils.skipSpaces(value, 0)
+      val builder = factory.newBuilder
+      var idx     = ParseUtils.skipSpaces(value, 0)
       if (value.charAt(idx) != '[') {
         throw new IllegalArgumentException(
           s"Cannot parse list value from '$value', at character $idx expecting '[' but got '${value.charAt(idx)}''"
@@ -99,6 +99,5 @@ abstract class AbstractSeqCodec[T, M[T] <: Seq[T]](
         throw new IllegalArgumentException(s"Malformed list value '$value', missing closing ']'")
       }
     }
-  }
 
 }

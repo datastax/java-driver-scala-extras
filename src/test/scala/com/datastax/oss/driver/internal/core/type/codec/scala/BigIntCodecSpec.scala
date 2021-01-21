@@ -1,11 +1,13 @@
 package com.datastax.oss.driver.internal.core.`type`.codec.scala
 
-import com.datastax.oss.driver.api.core.`type`.codec.TypeCodec
+import java.math.BigInteger
+
+import com.datastax.oss.driver.api.core.`type`.codec.{TypeCodec, TypeCodecs}
 import com.datastax.oss.driver.api.core.`type`.reflect.GenericType
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class BigIntCodecSpec extends AnyWordSpec with Matchers with CodecSpecBase[BigInt] {
+class BigIntCodecSpec extends AnyWordSpec with Matchers with CodecSpecBase[BigInt] with OnParCodecSpec[BigInt, java.math.BigInteger] {
 
   override protected val codec: TypeCodec[BigInt] = BigIntCodec
 
@@ -54,5 +56,23 @@ class BigIntCodecSpec extends AnyWordSpec with Matchers with CodecSpecBase[BigIn
       codec.accepts(BigInt(123)) shouldBe true
       codec.accepts(Int.MaxValue) shouldBe false
     }
+
+    "on par with Java Codec (encode-decode)" in testEncodeDecode(
+      null,
+      BigInt(0),
+      BigInt(1),
+      BigInt(123)
+    )
+
+    "on par with Java Codec (parse-format)" in testParseFormat(
+      null,
+      BigInt(0),
+      BigInt(1),
+      BigInt(123)
+    )
   }
+
+  override def javaCodec: TypeCodec[BigInteger] = TypeCodecs.VARINT
+
+  override def toJava(t: BigInt): BigInteger = if (t == null) null else t.bigInteger
 }

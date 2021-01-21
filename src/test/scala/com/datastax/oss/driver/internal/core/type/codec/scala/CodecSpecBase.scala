@@ -8,17 +8,21 @@ trait CodecSpecBase[T] {
 
   protected val codec: TypeCodec[T]
 
-  protected def encode(t: T, protocolVersion: ProtocolVersion): Option[String] =
+  def encode(t: T, protocolVersion: ProtocolVersion): Option[String] =
     Option(codec.encode(t, protocolVersion)).map(Bytes.toHexString)
 
-  protected def encode(t: T): Option[String] = encode(t, ProtocolVersion.DEFAULT)
+  def encode(t: T): Option[String] = encode(t, ProtocolVersion.DEFAULT)
 
-  protected def decode(hexString: String, protocolVersion: ProtocolVersion): Option[T] =
-    Option(hexString).map(Bytes.fromHexString).flatMap(hex => Option(codec.decode(hex, protocolVersion))) // FIXME, this is wrong, if hexString is null, then nothing happens
+  def decode(hexString: String, protocolVersion: ProtocolVersion): Option[T] = Option(
+    codec.decode(
+      if (hexString == null) null else Bytes.fromHexString(hexString),
+      protocolVersion
+    )
+  )
 
-  protected def decode(hexString: String): Option[T] = decode(hexString, ProtocolVersion.DEFAULT)
+  def decode(hexString: String): Option[T] = decode(hexString, ProtocolVersion.DEFAULT)
 
-  protected def format(t: T): String = codec.format(t)
+  def format(t: T): String = codec.format(t)
 
-  protected def parse(s: String): T = codec.parse(s)
+  def parse(s: String): T = codec.parse(s)
 }

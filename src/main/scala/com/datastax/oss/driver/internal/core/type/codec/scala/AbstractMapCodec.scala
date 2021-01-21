@@ -18,18 +18,20 @@ abstract class AbstractMapCodec[K, V, M[K, V] <: Map[K, V]](
     extends TypeCodec[M[K, V]] {
 
   override def accepts(value: Any): Boolean = value match {
-    case m: Map[_, _] => m.headOption.fold(true) {
-      case (key, value) => keyInner.accepts(key) && valueInner.accepts(value)
-    }
+    case m: Map[_, _] =>
+      m.headOption.fold(true) { case (key, value) =>
+        keyInner.accepts(key) && valueInner.accepts(value)
+      }
     case _ => false
   }
 
-  override val getCqlType: DataType = new DefaultMapType(keyInner.getCqlType, valueInner.getCqlType, frozen)
+  override val getCqlType: DataType =
+    new DefaultMapType(keyInner.getCqlType, valueInner.getCqlType, frozen)
 
   override def encode(value: M[K, V], protocolVersion: ProtocolVersion): ByteBuffer =
     if (value == null) null
     else {
-      // FIXME this seems pretty costly, we iterate the list several times!
+      // FIXME this seems pretty costly, we iterate the set several times!
       val buffers = List.newBuilder[ByteBuffer]
       for ((k, v) <- value) {
         if (k == null) {
@@ -66,17 +68,18 @@ abstract class AbstractMapCodec[K, V, M[K, V] <: Map[K, V]](
     if (value == null) {
       "NULL"
     } else {
-      value.map {
-        case (key, value) => s"${keyInner.format(key)}:${valueInner.format(value)}" // Using a SB would yield better performance
-      }.mkString("{", ",", "}")
+      value
+        .map { case (key, value) =>
+          s"${keyInner.format(key)}:${valueInner.format(value)}" // Using a SB would yield better performance
+        }
+        .mkString("{", ",", "}")
     }
 
   override def parse(value: String): M[K, V] = {
-    val builder = factory.newBuilder
-
     if (value == null || value.isEmpty || value.equalsIgnoreCase("NULL")) {
-      builder.result()
+      null.asInstanceOf[M[K, V]]
     } else {
+      val builder = factory.newBuilder
       var idx = ParseUtils.skipSpaces(value, 0)
       if (value.charAt(idx) != '{') {
         throw new IllegalArgumentException(
@@ -94,14 +97,15 @@ abstract class AbstractMapCodec[K, V, M[K, V] <: Map[K, V]](
           idx = ParseUtils.skipSpaces(value, n)
           if (idx >= value.length || value.charAt(idx) != ':') {
             throw new IllegalArgumentException(
-              s"Cannot parse map value from '$value', at character $idx expecting ':' but got '${value.charAt(idx)}''"
+              s"Cannot parse map value from '$value', at character $idx expecting ':' but got '${value
+                .charAt(idx)}''"
             )
           }
 
           // Parse Value
           idx = ParseUtils.skipSpaces(value, idx + 1)
           val nv = ParseUtils.skipCQLValue(value, idx)
-          val v = valueInner.parse(value.substring(idx, nv))
+          val v  = valueInner.parse(value.substring(idx, nv))
           builder += k -> v
 
           idx = ParseUtils.skipSpaces(value, nv)

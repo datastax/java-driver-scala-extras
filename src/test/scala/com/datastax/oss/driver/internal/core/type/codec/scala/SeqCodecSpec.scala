@@ -1,6 +1,5 @@
 package com.datastax.oss.driver.internal.core.`type`.codec.scala
 
-import com.datastax.oss.driver.api.core.ProtocolVersion
 import com.datastax.oss.driver.api.core.`type`.codec.TypeCodec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -19,7 +18,7 @@ class SeqCodecSpec extends AnyWordSpec with Matchers with CodecSpecBase[Seq[Int]
     }
 
     "decode" in {
-      codec.decode(null, ProtocolVersion.DEFAULT) shouldBe Seq.empty[Int]
+      decode(null) shouldBe Some(Seq.empty[Int])
       decode("0x00000000") shouldBe Some(Seq.empty[Int])
       decode("0x00000003000000040000000100000004000000020000000400000003") shouldBe Some(
         Seq(1, 2, 3)
@@ -32,8 +31,8 @@ class SeqCodecSpec extends AnyWordSpec with Matchers with CodecSpecBase[Seq[Int]
     }
 
     "parse" in {
-      parse("") shouldBe Seq.empty[Int]
-      parse("NULL") shouldBe Seq.empty[Int]
+      parse("") shouldBe null
+      parse("NULL") shouldBe null
       parse("[]") shouldBe Seq.empty[Int]
       parse("[1,2,3]") shouldBe Seq(1, 2, 3)
       parse(" [ 1 , 2 , 3 ] ") shouldBe Seq(1, 2, 3)

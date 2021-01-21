@@ -21,7 +21,7 @@ class SortedSetCodecSpec extends AnyWordSpec with Matchers with CodecSpecBase[So
     }
 
     "decode" in {
-      codec.decode(null, ProtocolVersion.DEFAULT) shouldBe Set.empty[Int]
+      decode(null) shouldBe Some(Set.empty[Int])
       decode("0x00000000") shouldBe Some(SortedSet.empty[Int])
       decode("0x00000003000000040000000100000004000000020000000400000003") shouldBe Some(
         Set(1, 2, 3)
@@ -34,8 +34,8 @@ class SortedSetCodecSpec extends AnyWordSpec with Matchers with CodecSpecBase[So
     }
 
     "parse" in {
-      parse("") shouldBe SortedSet.empty[Int]
-      parse("NULL") shouldBe SortedSet.empty[Int]
+      parse("") shouldBe null
+      parse("NULL") shouldBe null
       parse("{}") shouldBe SortedSet.empty[Int]
       parse("{1,2,3}") shouldBe SortedSet(1, 2, 3)
       parse(" { 1 , 2 , 3 } ") shouldBe SortedSet(1, 2, 3)

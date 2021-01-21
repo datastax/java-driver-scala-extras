@@ -1,11 +1,17 @@
 package com.datastax.oss.driver.internal.core.`type`.codec.scala
 
-import com.datastax.oss.driver.api.core.`type`.codec.TypeCodec
+import java.lang
+
+import com.datastax.oss.driver.api.core.`type`.codec.{ TypeCodec, TypeCodecs }
 import com.datastax.oss.driver.api.core.`type`.reflect.GenericType
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class BooleanCodecSpec extends AnyWordSpec with Matchers with CodecSpecBase[Boolean] {
+class BooleanCodecSpec
+    extends AnyWordSpec
+    with Matchers
+    with CodecSpecBase[Boolean]
+    with OnParCodecSpec[Boolean, java.lang.Boolean] {
 
   override protected val codec: TypeCodec[Boolean] = BooleanCodec
 
@@ -19,6 +25,7 @@ class BooleanCodecSpec extends AnyWordSpec with Matchers with CodecSpecBase[Bool
       decode("0x00") shouldBe Some(false)
       decode("0x01") shouldBe Some(true)
       decode("0x") shouldBe Some(false)
+      decode(null) shouldBe Some(false)
     }
 
     "fail to decode if too many bytes" in {
@@ -62,5 +69,20 @@ class BooleanCodecSpec extends AnyWordSpec with Matchers with CodecSpecBase[Bool
       codec.accepts(true) shouldBe true
       codec.accepts(Int.MaxValue) shouldBe false
     }
+
+    // Can't test 'null' since 'Boolean' extends 'AnyVal'
+    "on par with Java Codec (encode-decode)" in testEncodeDecode(
+      true,
+      false
+    )
+
+    "on par with Java Codec (parse-format)" in testParseFormat(
+      true,
+      false
+    )
   }
+
+  override def javaCodec: TypeCodec[lang.Boolean] = TypeCodecs.BOOLEAN
+
+  override def toJava(t: Boolean): lang.Boolean = t
 }

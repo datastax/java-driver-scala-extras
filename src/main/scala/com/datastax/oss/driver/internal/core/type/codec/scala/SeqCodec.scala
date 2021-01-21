@@ -4,7 +4,6 @@ import com.datastax.oss.driver.api.core.`type`.codec.TypeCodec
 import com.datastax.oss.driver.api.core.`type`.reflect.{ GenericType, GenericTypeParameter }
 import com.datastax.oss.driver.shaded.guava.common.reflect.TypeToken
 
-
 class SeqCodec[T](inner: TypeCodec[T], frozen: Boolean)
     extends AbstractSeqCodec[T, Seq](inner, frozen) {
 
