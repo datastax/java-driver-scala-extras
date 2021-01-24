@@ -9,8 +9,6 @@ import scala.collection.immutable.SortedSet
 class SortedSetCodec[T: Ordering](inner: TypeCodec[T], frozen: Boolean)
     extends AbstractSetCodec[T, SortedSet](inner, frozen) {
 
-  // Doing this here, TypeToken complains on construction if is `M[T]`.
-  // TODO investigate is there a way to doing in the parent class
   override val getJavaType: GenericType[SortedSet[T]] =
     GenericType
       .of(new TypeToken[SortedSet[T]]() {}.getType)

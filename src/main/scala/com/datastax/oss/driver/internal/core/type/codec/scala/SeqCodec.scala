@@ -7,8 +7,6 @@ import com.datastax.oss.driver.shaded.guava.common.reflect.TypeToken
 class SeqCodec[T](inner: TypeCodec[T], frozen: Boolean)
     extends AbstractSeqCodec[T, Seq](inner, frozen) {
 
-  // Doing this here, TypeToken complains on construction if is `M[T]`.
-  // TODO investigate is there a way to doing in the parent class
   override val getJavaType: GenericType[Seq[T]] =
     GenericType
       .of(new TypeToken[Seq[T]]() {}.getType)

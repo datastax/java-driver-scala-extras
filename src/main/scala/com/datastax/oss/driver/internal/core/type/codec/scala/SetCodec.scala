@@ -7,8 +7,6 @@ import com.datastax.oss.driver.shaded.guava.common.reflect.TypeToken
 class SetCodec[T](inner: TypeCodec[T], frozen: Boolean)
     extends AbstractSetCodec[T, Set](inner, frozen) {
 
-  // Doing this here, TypeToken complains on construction if is `M[T]`.
-  // TODO investigate is there a way to doing in the parent class
   override val getJavaType: GenericType[Set[T]] =
     GenericType
       .of(new TypeToken[Set[T]]() {}.getType)
