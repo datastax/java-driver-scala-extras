@@ -16,6 +16,13 @@ class MapCodec[K, V](keyInner: TypeCodec[K], valueInner: TypeCodec[V], frozen: B
 }
 
 object MapCodec {
+  def apply[K, V](
+      keyInner: TypeCodec[K],
+      valueInner: TypeCodec[V],
+      frozen: Boolean
+  ): MapCodec[K, V] =
+    new MapCodec(keyInner, valueInner, frozen)
+
   def frozen[K, V](keyInner: TypeCodec[K], valueInner: TypeCodec[V]): MapCodec[K, V] =
     new MapCodec(keyInner, valueInner, true)
 }

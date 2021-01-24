@@ -5,6 +5,7 @@ import java.nio.ByteBuffer
 import com.datastax.oss.driver.api.core.ProtocolVersion
 
 package object scala {
+
   // TODO check if this could be more Scala-y
   // TODO check if we could skip the second iteration
   // TODO `elements` seems unnecessary given that we've an array

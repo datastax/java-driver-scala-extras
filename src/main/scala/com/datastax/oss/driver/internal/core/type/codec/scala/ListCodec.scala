@@ -15,5 +15,8 @@ class ListCodec[T](inner: TypeCodec[T], frozen: Boolean)
 }
 
 object ListCodec {
+  def apply[T](inner: TypeCodec[T], frozen: Boolean): ListCodec[T] =
+    new ListCodec(inner, frozen)
+
   def frozen[T](inner: TypeCodec[T]): ListCodec[T] = new ListCodec[T](inner, true)
 }

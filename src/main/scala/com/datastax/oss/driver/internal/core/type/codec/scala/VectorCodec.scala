@@ -16,5 +16,8 @@ class VectorCodec[T](inner: TypeCodec[T], frozen: Boolean)
 }
 
 object VectorCodec {
+  def apply[T](inner: TypeCodec[T], frozen: Boolean): VectorCodec[T] =
+    new VectorCodec(inner, frozen)
+
   def frozen[T](inner: TypeCodec[T]): VectorCodec[T] = new VectorCodec[T](inner, true)
 }

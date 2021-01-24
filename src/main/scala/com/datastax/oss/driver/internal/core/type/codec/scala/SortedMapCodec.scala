@@ -21,6 +21,13 @@ class SortedMapCodec[K: Ordering, V](
 }
 
 object SortedMapCodec {
+  def apply[K: Ordering, V](
+      keyInner: TypeCodec[K],
+      valueInner: TypeCodec[V],
+      frozen: Boolean
+  ): SortedMapCodec[K, V] =
+    new SortedMapCodec(keyInner, valueInner, frozen)
+
   def frozen[K: Ordering, V](
       keyInner: TypeCodec[K],
       valueInner: TypeCodec[V]

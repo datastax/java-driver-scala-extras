@@ -15,5 +15,8 @@ class SeqCodec[T](inner: TypeCodec[T], frozen: Boolean)
 }
 
 object SeqCodec {
+  def apply[T](inner: TypeCodec[T], frozen: Boolean): SeqCodec[T] =
+    new SeqCodec(inner, frozen)
+
   def frozen[T](inner: TypeCodec[T]): SeqCodec[T] = new SeqCodec[T](inner, true)
 }

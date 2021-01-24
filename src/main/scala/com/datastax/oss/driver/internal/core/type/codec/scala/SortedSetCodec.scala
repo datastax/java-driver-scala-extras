@@ -17,6 +17,9 @@ class SortedSetCodec[T: Ordering](inner: TypeCodec[T], frozen: Boolean)
 }
 
 object SortedSetCodec {
+  def apply[T: Ordering](inner: TypeCodec[T], frozen: Boolean): SortedSetCodec[T] =
+    new SortedSetCodec(inner, frozen)
+
   def frozen[T: Ordering](inner: TypeCodec[T]): SortedSetCodec[T] =
     new SortedSetCodec[T](inner, true)
 }

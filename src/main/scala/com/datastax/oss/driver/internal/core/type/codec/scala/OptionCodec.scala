@@ -46,3 +46,7 @@ class OptionCodec[T](inner: TypeCodec[T]) extends TypeCodec[Option[T]] {
   }
 
 }
+
+object OptionCodec {
+  def apply[T](inner: TypeCodec[T]): OptionCodec[T] = new OptionCodec(inner)
+}
