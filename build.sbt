@@ -17,7 +17,8 @@ lazy val extras = project
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.3.2",
       "org.scalatest"          %% "scalatest"               % "3.2.3"   % "test",
       "org.scalacheck"         %% "scalacheck"              % "1.15.1"  % "test",
-      "org.cassandraunit"       % "cassandra-unit"          % "4.3.1.0" % "test"
+      "org.cassandraunit"       % "cassandra-unit"          % "4.3.1.0" % "test",
+      "org.mockito"             % "mockito-core"            % "3.7.7"   % "test"
     ),
     scalacOptions ++= Seq(
       "-encoding",
@@ -28,7 +29,7 @@ lazy val extras = project
       "-Xlint"
     ),
     javacOptions ++= Seq("-Xlint:unchecked", "-Xlint:deprecation"),
-    testOptions in Test += Tests.Argument("-oF") // Show full stack tracegit 
+    testOptions in Test += Tests.Argument("-oF") // Show full stack tracegit
   )
 
 /* TODO decide if we keep or remove this
@@ -46,4 +47,4 @@ lazy val bench = project
     logBuffered := false
   )
   .dependsOn(extras)
-*/
+ */
