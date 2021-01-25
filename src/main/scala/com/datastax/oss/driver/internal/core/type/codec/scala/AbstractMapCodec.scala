@@ -8,7 +8,7 @@ import com.datastax.oss.driver.api.core.`type`.codec.TypeCodec
 import com.datastax.oss.driver.internal.core.`type`.DefaultMapType
 import com.datastax.oss.driver.internal.core.`type`.codec.ParseUtils
 
-import scala.collection.Factory
+import scala.collection.compat._
 
 abstract class AbstractMapCodec[K, V, M[K, V] <: Map[K, V]](
     keyInner: TypeCodec[K],

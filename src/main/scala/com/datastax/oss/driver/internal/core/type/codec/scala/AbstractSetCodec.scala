@@ -8,7 +8,7 @@ import com.datastax.oss.driver.api.core.`type`.codec.TypeCodec
 import com.datastax.oss.driver.internal.core.`type`.DefaultSetType
 import com.datastax.oss.driver.internal.core.`type`.codec.ParseUtils
 
-import scala.collection.Factory
+import scala.collection.compat._
 
 abstract class AbstractSetCodec[T, M[T] <: Set[T]](
     inner: TypeCodec[T],

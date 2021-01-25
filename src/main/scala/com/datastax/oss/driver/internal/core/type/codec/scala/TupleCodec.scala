@@ -10,11 +10,10 @@ import com.datastax.oss.driver.internal.core.`type`.DefaultTupleType
 import com.datastax.oss.driver.internal.core.`type`.codec.ParseUtils
 import com.datastax.oss.driver.shaded.guava.common.reflect.TypeToken
 
-/**
- * Offers methods for creating TupleCodecs.
- * This is not a type safe implementation like the other codecs, while maintaining a typesafe API.
- * The problem mainly comes from inability of building tuples piece by piece in a type safe manner.
- */
+/** Offers methods for creating TupleCodecs.
+  * This is not a type safe implementation like the other codecs, while maintaining a typesafe API.
+  * The problem mainly comes from inability of building tuples piece by piece in a type safe manner.
+  */
 object TupleCodec {
 
   // This is similar to collections, but doesn't store the total size of thee collection
@@ -50,7 +49,7 @@ object TupleCodec {
         require(tuple.productArity == codecs.size, s"Tuple must have size [$codecsSize]")
 
         val buffers = List.newBuilder[ByteBuffer]
-        tuple.productIterator.zip(codecs.asInstanceOf[List[TypeCodec[Any]]]).foreach {
+        tuple.productIterator.toList.zip(codecs.asInstanceOf[List[TypeCodec[Any]]]).foreach {
           case (value, codec) =>
             buffers += codec
               .encode(value, protocolVersion) // Could double check here and call 'accept'
@@ -97,19 +96,18 @@ object TupleCodec {
         }
       }
 
-    override def format(value: T): String = {
+    override def format(value: T): String =
       if (value == null) "NULL"
       else {
         require(value.productArity == codecs.size, s"Tuple must have size [$codecsSize]")
 
-        value.productIterator
+        value.productIterator.toList
           .zip(codecs.asInstanceOf[List[TypeCodec[Any]]])
           .map { case (v, codec) =>
             codec.format(v)
           }
           .mkString("(", ",", ")")
       }
-    }
 
     override def parse(value: String): T =
       if (value == null || value.isEmpty || value.equalsIgnoreCase("NULL")) {
@@ -170,7 +168,7 @@ object TupleCodec {
 
     override def accepts(value: Any): Boolean = value match {
       case tuple: Product if tuple.productArity == codecsSize =>
-        tuple.productIterator.zip(codecs.asInstanceOf[List[TypeCodec[Any]]]).forall {
+        tuple.productIterator.toList.zip(codecs.asInstanceOf[List[TypeCodec[Any]]]).forall {
           case (value, codec) => codec.accepts(value)
         }
       case _ => false
