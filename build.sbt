@@ -29,22 +29,24 @@ lazy val extras = project
       "-Xlint"
     ),
     javacOptions ++= Seq("-Xlint:unchecked", "-Xlint:deprecation"),
-    testOptions in Test += Tests.Argument("-oF") // Show full stack tracegit
-  )
+    testOptions in Test += Tests.Argument("-oF"), // Show full stack
+    // Adds a `src/main/scala-2.13+` source directory for Scala 2.13 and newer
+    // and a `src/main/scala-2.13-` source directory for Scala version older than 2.13
+    unmanagedSourceDirectories in Compile += {
+      val sourceDir = (sourceDirectory in Compile).value
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, n)) if n >= 13 => sourceDir / "scala-2.13+"
+        case _ => sourceDir / "scala-2.13-"
+      }
+    },
 
-/* TODO decide if we keep or remove this
-lazy val bench = project
-  .settings(
-    scalaVersion := "2.13.4",
-    scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-Xlint"),
-    publishArtifact := false,
-    libraryDependencies ++= Seq(
-      "com.datastax.oss"   % "java-driver-core" % "4.9.0" % "test",
-      "com.storm-enroute" %% "scalameter"       % "0.20"  % "test"
-    ),
-    testFrameworks += new TestFramework("org.scalameter.ScalaMeterFramework"),
-    parallelExecution in Test := false,
-    logBuffered := false
+    libraryDependencies ++= {
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, n)) if n >= 13 => Seq()
+        case _ => Seq(
+          // Only include this on 2.13-, we use `scala.jdk` on 2.13+
+          "org.scala-lang.modules" %% "scala-java8-compat" % "0.9.1"
+        )
+      }
+    }
   )
-  .dependsOn(extras)
- */

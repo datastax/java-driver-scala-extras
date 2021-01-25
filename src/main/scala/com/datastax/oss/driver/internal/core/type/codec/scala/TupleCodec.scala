@@ -128,7 +128,7 @@ object TupleCodec {
         while (idx < value.length) {
           if (codec.isEmpty)
             throw new IllegalArgumentException(
-              s"Cannot parse tuple from '${value}', more values than expected"
+              s"Cannot parse tuple from '$value', more values than expected"
             )
 
           val n      = ParseUtils.skipCQLValue(value, idx)
@@ -211,6 +211,8 @@ object TupleCodec {
   //       |  )
   //       |""".stripMargin
   //  }
+  //
+  //  (2 to 22).map(template).foreach(println(_))
 
   // format: off
 
