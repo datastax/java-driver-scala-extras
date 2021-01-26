@@ -9,6 +9,7 @@ lazy val extras = project
     version := "1.0",
     organizationName := "DataStax",
     startYear := Some(2017),
+    headerLicense := Some(HeaderLicense.ALv2("2017", "DataStax")),
     licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt")),
     scalaVersion := scala213,
     crossScalaVersions := supportedScalaVersions,
